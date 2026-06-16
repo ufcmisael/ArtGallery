@@ -6,7 +6,16 @@ public class Exposicao {
     private String nome;
     private Vector<Obra> obras;
 
-    public void adicionar(Obra obra) {
+    public Exposicao(String nome) {
+        this.nome = nome;
+        this.obras = new Vector<>();
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void adicionarObra(Obra obra) {
         this.obras.add(obra);
     }
 
