@@ -3,8 +3,8 @@ package br.ufc.artgallery.model;
 import java.util.Vector;
 
 public class Exposicao {
-    private String nome;
-    private Vector<Obra> obras;
+    private final String nome;
+    private final Vector<Obra> obras;
 
     public Exposicao(String nome) {
         this.nome = nome;

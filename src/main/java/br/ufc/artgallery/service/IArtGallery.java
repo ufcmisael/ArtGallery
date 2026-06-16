@@ -9,12 +9,12 @@ import java.util.Vector;
 
 public interface IArtGallery {
 
-    public void publicarObra(Obra obra) throws ObraJaCadastradaException;
-    public void removerObra(String titulo) throws ObraNaoEncontradaException;
-    public void avaliarObra(String titulo, Avaliacao avaliacao) throws ObraNaoEncontradaException;
-    public Vector<Obra> listarObras();
-    public Vector<Obra> buscarPorAutor(String autor);
-    public Vector<Obra> topObras();
-    public  Vector<Obra> obrasExpostas(String nomeExposicao);
+    void publicarObra(Obra obra) throws ObraJaCadastradaException;
+    void removerObra(String titulo) throws ObraNaoEncontradaException;
+    void avaliarObra(String titulo, Avaliacao avaliacao) throws ObraNaoEncontradaException;
+    Vector<Obra> listarObras();
+    Vector<Obra> buscarPorAutor(String autor);
+    Vector<Obra> topObras();
+    Vector<Obra> obrasExpostas(String nomeExposicao);
 
 }

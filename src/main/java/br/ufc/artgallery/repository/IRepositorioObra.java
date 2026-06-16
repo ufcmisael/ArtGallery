@@ -7,9 +7,9 @@ import br.ufc.artgallery.model.Obra;
 import java.util.Vector;
 
 public interface IRepositorioObra {
-    public void cadastrar(Obra obra) throws ObraJaCadastradaException;
-    public Obra buscar(String titulo);
-    public void atualizar(Obra obra) throws ObraNaoEncontradaException;
-    public void remover(String titulo);
-    public Vector<Obra> listar();
+    void cadastrar(Obra obra) throws ObraJaCadastradaException;
+    Obra buscar(String titulo);
+    void atualizar(Obra obra) throws ObraNaoEncontradaException;
+    void remover(String titulo);
+    Vector<Obra> listar();
 }

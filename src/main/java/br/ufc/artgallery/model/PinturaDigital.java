@@ -1,8 +1,8 @@
 package br.ufc.artgallery.model;
 
 public class PinturaDigital extends Obra {
-    private String resolucao;
-    private String softwareUtilizado;
+    private final String resolucao;
+    private final String softwareUtilizado;
 
     public PinturaDigital(String titulo, String autor, String resolucao, String softwareUtilizado) {
         super(titulo, autor);

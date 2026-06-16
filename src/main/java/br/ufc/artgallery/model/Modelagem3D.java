@@ -1,8 +1,8 @@
 package br.ufc.artgallery.model;
 
 public class Modelagem3D extends Obra {
-    private int numeroPoligonos;
-    private String engine;
+    private final int numeroPoligonos;
+    private final String engine;
 
     public int getNumeroPoligonos() {
         return numeroPoligonos;

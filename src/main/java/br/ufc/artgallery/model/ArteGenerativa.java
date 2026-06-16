@@ -1,8 +1,8 @@
 package br.ufc.artgallery.model;
 
 public class ArteGenerativa extends Obra {
-    private String algoritmo;
-    private long seed;
+    private final String algoritmo;
+    private final long seed;
 
     public ArteGenerativa(String titulo, String autor, String algoritmo, long seed) {
         super(titulo, autor);
