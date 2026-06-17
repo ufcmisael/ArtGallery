@@ -2,7 +2,12 @@ package br.ufc.artgallery.model;
 
 import br.ufc.artgallery.exception.NotaInvalidaException;
 
-public class Avaliacao {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class Avaliacao implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private String usuario;
     private int nota;
     private String comentario;
@@ -20,26 +25,12 @@ public class Avaliacao {
         return usuario;
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
     public int getNota() {
         return nota;
-    }
-
-    public void setNota(int nota) throws NotaInvalidaException {
-        if (nota < 0 || nota > 10) {
-            throw new NotaInvalidaException("Nota inválida: " + nota + ". O valor deveria estar entre 0 e 10.");
-        }
-       this.nota = nota;
     }
 
     public String getComentario() {
         return comentario;
     }
 
-    public void setComentario(String comentario) {
-        this.comentario = comentario;
-    }
 }

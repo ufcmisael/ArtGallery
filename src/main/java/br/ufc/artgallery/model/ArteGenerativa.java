@@ -21,13 +21,13 @@ public class ArteGenerativa extends Obra {
     @Override
     public String exibirDetalhes() {
         return String.format(
-                "===============================" +
+//                "===============================" +
                         "\nTítulo: " + this.getTitulo() +
                         "\nAutor: " + this.getAutor() +
                         "\nTipo: " + "Arte Generativa" +
                         "\nAlgoritmo: " + this.getAlgoritmo() +
-                        "\nSeed: " + this.getSeed() +
-                        "\n==============================="
+                        "\nSeed: " + this.getSeed() //+
+//                        "\n==============================="
         );
     }
 

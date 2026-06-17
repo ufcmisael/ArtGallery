@@ -1,7 +1,6 @@
 package br.ufc.artgallery.repository;
 
 import br.ufc.artgallery.exception.ObraJaCadastradaException;
-import br.ufc.artgallery.exception.ObraNaoEncontradaException;
 import br.ufc.artgallery.model.Obra;
 
 import java.util.Vector;
@@ -16,7 +15,7 @@ public class RepositorioObra implements IRepositorioObra {
     @Override
     public void cadastrar(Obra obra) throws ObraJaCadastradaException {
         if (obras.contains(obra)) {
-            throw new ObraJaCadastradaException("Obra já cadastrada: " + obra.getTitulo());
+            throw new ObraJaCadastradaException("A obra '" + obra.getTitulo() + "' já está cadastrada!");
         }
         obras.add(obra);
 //        boolean match = obras.stream() .anyMatch(o -> o.equals(obra));
@@ -40,12 +39,10 @@ public class RepositorioObra implements IRepositorioObra {
     }
 
     @Override
-    public void atualizar(Obra obra) throws ObraNaoEncontradaException {
+    public void atualizar(Obra obra) {
         int index = obras.indexOf(obra);
         if (index != -1) {
             obras.set(index, obra);
-        }else {
-            throw new ObraNaoEncontradaException("Não foi encontrada obra correspondente: " + obra);
         }
     }
 

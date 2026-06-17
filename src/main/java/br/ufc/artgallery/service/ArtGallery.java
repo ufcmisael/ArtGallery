@@ -1,10 +1,13 @@
 package br.ufc.artgallery.service;
 
+import br.ufc.artgallery.exception.ExposicaoJaCadastradaException;
+import br.ufc.artgallery.exception.ExposicaoNaoEncontrada;
 import br.ufc.artgallery.exception.ObraJaCadastradaException;
 import br.ufc.artgallery.exception.ObraNaoEncontradaException;
 import br.ufc.artgallery.model.Avaliacao;
 import br.ufc.artgallery.model.Exposicao;
 import br.ufc.artgallery.model.Obra;
+import br.ufc.artgallery.repository.IRepositorioExposicao;
 import br.ufc.artgallery.repository.IRepositorioObra;
 
 import java.util.Vector;
@@ -12,11 +15,11 @@ import java.util.stream.Collectors;
 
 public class ArtGallery implements IArtGallery {
     private final IRepositorioObra repositorio;
-    private final Vector<Exposicao> exposicoes;
+    private final IRepositorioExposicao exposicoes;
 
-    public ArtGallery(IRepositorioObra repositorio) {
+    public ArtGallery(IRepositorioObra repositorio, IRepositorioExposicao exposicoes) {
         this.repositorio = repositorio;
-        this.exposicoes = new Vector<>();
+        this.exposicoes = exposicoes;
     }
 
     @Override
@@ -33,22 +36,34 @@ public class ArtGallery implements IArtGallery {
     public void removerObra(String titulo) throws ObraNaoEncontradaException {
         Obra obra = repositorio.buscar(titulo);
         if(obra == null){
-           throw new ObraNaoEncontradaException("Obra nao encontradaaaa");
+           throw new ObraNaoEncontradaException("Obra ' "+ titulo + "' não encontrada.");
         }
         if(!obra.isAtiva()){
-            throw new ObraNaoEncontradaException("Obra nao esta ativaaaa");
+            throw new ObraNaoEncontradaException("A obra ' "+ titulo + "' já está desativada!");
         }
         repositorio.remover(titulo);
+    }
+
+    public void ativarObra(String titulo) throws ObraNaoEncontradaException {
+        Obra obra = repositorio.buscar(titulo);
+        if(obra == null){
+            throw new ObraNaoEncontradaException("Obra ' "+ titulo + "' não encontrada.");
+        }
+        if(obra.isAtiva()){
+            throw new ObraNaoEncontradaException("A obra ' "+ titulo + "' já está ativada!");
+        }
+        obra.setAtiva(true);
+        repositorio.atualizar(obra);
     }
 
     @Override
     public void avaliarObra(String titulo, Avaliacao avaliacao) throws ObraNaoEncontradaException {
         Obra obra = repositorio.buscar(titulo);
         if(obra == null){
-            throw new ObraNaoEncontradaException("Obra nao encontradaaaa");
+            throw new ObraNaoEncontradaException("Obra ' "+ titulo + "' não encontrada.");
         }
         if(!obra.isAtiva()){
-            throw new ObraNaoEncontradaException("Obra nao esta ativaaaa");
+            throw new ObraNaoEncontradaException("A obra ' "+ titulo + "' não está ativada!");
         }
         obra.adicionarAvaliacao(avaliacao);
         repositorio.atualizar(obra);
@@ -93,44 +108,39 @@ public class ArtGallery implements IArtGallery {
                 .collect(Collectors.toCollection(Vector::new));
     }
 
-    public void criarExposicao(String nome) {
+    public void criarExposicao(String nome) throws ExposicaoJaCadastradaException {
         Exposicao exposicao = new Exposicao(nome);
-        exposicoes.add(exposicao);
+        exposicoes.cadastrar(exposicao);
     }
 
-    public boolean publicarObraExposicao(String nomeExposicao, Obra obra) throws ObraNaoEncontradaException {
-       if (obra == null) throw new ObraNaoEncontradaException("nao achamo");
-        boolean sucesso = false;
-        for (Exposicao e : exposicoes) {
-            if (e.getNome().equalsIgnoreCase(nomeExposicao)) {
-                e.adicionarObra(obra);
-                sucesso = true;
-            }
-        }
+    public void publicarObraExposicao(String nomeExposicao, String titulo) throws ObraNaoEncontradaException, ExposicaoNaoEncontrada {
+        Obra obra = repositorio.buscar(titulo);
+       if (obra == null) {
+           throw new ObraNaoEncontradaException("Obra ' "+ titulo + "' não encontrada.");
+       }
 
-        return sucesso;
+       Exposicao e = exposicoes.buscar(nomeExposicao);
+       if (e == null) {
+           throw new ExposicaoNaoEncontrada("Exposição '" + nomeExposicao + "' não encontrada.");
+       }
 
-//        Exposicao ex = exposicoes.stream()
-//                .filter(e -> e.getNome().equalsIgnoreCase(nomeExposicao))
-//                .findFirst()
-//                .orElse(null)
-//                .adicionarObra(obra);
-//        if (ex != null) {
-//            ex.adicionarObra(obra);
-//            sucesso = true;
-//        }
-//        return sucesso;
+       exposicoes.publicarObra(e,obra);
+    }
+
+    public Vector<Exposicao> listarExposicoes() {
+        return exposicoes.listar();
     }
 
     @Override
     public Vector<Obra> obrasExpostas(String nomeExposicao) {
+
 //        for (Exposicao e : exposicoes) {
 //            if (e.getNome().equalsIgnoreCase(nomeExposicao)) {
 //                return e.listarObras();
 //            }
 //        }
 //        return new Vector<>();
-        return exposicoes.stream()
+        return exposicoes.listar().stream()
                 .filter(e -> e.getNome().equalsIgnoreCase(nomeExposicao))
                 .findFirst()
                 .map(Exposicao::listarObras)

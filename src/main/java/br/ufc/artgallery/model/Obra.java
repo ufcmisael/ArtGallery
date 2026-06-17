@@ -2,10 +2,14 @@ package br.ufc.artgallery.model;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Vector;
 
-public abstract class Obra implements Comparable<Obra> {
+public abstract class Obra implements Comparable<Obra>, Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private final String titulo;
     private final String autor;
     private boolean ativa;
@@ -16,6 +20,10 @@ public abstract class Obra implements Comparable<Obra> {
         this.autor = autor;
         this.ativa = true;
         this.avaliacoes = new Vector<>();
+    }
+
+    public Vector<Avaliacao> getAvaliacoes() {
+        return avaliacoes;
     }
 
     public String getTitulo() {
@@ -56,7 +64,10 @@ public abstract class Obra implements Comparable<Obra> {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Obra obra = (Obra) o;
-        return Objects.equals(titulo, obra.titulo) && Objects.equals(autor, obra.autor);
+        boolean t = (this.titulo != null && this.titulo.equalsIgnoreCase(obra.titulo));
+        boolean a = (this.autor != null && this.autor.equalsIgnoreCase(obra.autor));
+
+        return t && a;
     }
 
     @Override
