@@ -131,6 +131,19 @@ public class ArtGallery implements IArtGallery {
         return exposicoes.listar();
     }
 
+    public Vector<Avaliacao> listarAvaliacoes(String titulo) {
+        return repositorio.listar().stream()
+                .filter(o -> o.getTitulo().equalsIgnoreCase(titulo))
+                .findFirst()
+                .map(Obra::getAvaliacoes)
+                .orElse(new Vector<>());
+    }
+    public Vector<Avaliacao> listarAvaliacoes() {
+        return repositorio.listar().stream()
+                .flatMap(o -> o.getAvaliacoes().stream())
+                .collect(Collectors.toCollection(Vector::new));
+    }
+
     @Override
     public Vector<Obra> obrasExpostas(String nomeExposicao) {
 

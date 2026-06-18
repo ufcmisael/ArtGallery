@@ -99,9 +99,11 @@ public class JanelaPrincipal extends JFrame {
 
         return menu;
     }
+
     private void mostrarKitano() {
         exibirComImagem("tenha um bom dia!", kitano);
     }
+
     // Menu Obras
     private JMenu menuObras() {
         JMenu menu = new JMenu("Obras");
@@ -131,9 +133,19 @@ public class JanelaPrincipal extends JFrame {
     // Menu Avaliações
     private JMenu menuAvaliacoes() {
         JMenu menu = new JMenu("Avaliações");
+
         JMenuItem avaliar = new JMenuItem("Avaliar Obra");
+        JMenuItem listar = new JMenuItem("Listar Avaliações duma Obra");
+        JMenuItem listarTodos = new JMenuItem("Listar Todas Avaliações");
+
         avaliar.addActionListener(e -> avaliarObra());
+        listarTodos.addActionListener(e -> listarTodasAvaliacoes());
+        listar.addActionListener(e -> listarAvaliacoes());
+
         menu.add(avaliar);
+        menu.add(listar);
+        menu.add(listarTodos);
+
         return menu;
     }
 
@@ -142,8 +154,8 @@ public class JanelaPrincipal extends JFrame {
         JMenu menu = new JMenu("Consultas");
 
         JMenuItem listar = new JMenuItem("Listar Obras Ativas");
-        JMenuItem porAutor = new JMenuItem("Buscar por Autor");
-        JMenuItem top = new JMenuItem("Top Obras (por avaliação)");
+        JMenuItem porAutor = new JMenuItem("Listar Obras por Autor");
+        JMenuItem top = new JMenuItem("Listar o Ranking das Obras");
 
         listar.addActionListener(e -> listarObras());
         porAutor.addActionListener(e -> buscarPorAutor());
@@ -162,7 +174,7 @@ public class JanelaPrincipal extends JFrame {
 
         JMenuItem criar = new JMenuItem("Criar Exposição");
         JMenuItem adicionarObra = new JMenuItem("Adicionar Obra à Exposição");
-        JMenuItem listar= new JMenuItem("Listar Obras de Exposição");
+        JMenuItem listar= new JMenuItem("Listar Obras de uma Exposição");
         JMenuItem listarE = new JMenuItem("Listar Exposições disponíveis");
 
         criar.addActionListener(e -> criarExposicao());
@@ -324,15 +336,68 @@ public class JanelaPrincipal extends JFrame {
             return;
         }
         StringBuilder sb = new StringBuilder("Obras ativas:\n\n");
-        sb.append("=".repeat(40)).append("\n");
+        sb.append("—".repeat(80)).append("\n");
         for (Obra o : obras) {
             sb.append(o.exibirDetalhes()).append("\n");
-            sb.append("Média de avaliações: ").append(String.format("%.1f", o.mediaAvaliacoes())).append("\n");
-            sb.append("=".repeat(40)).append("\n");
+            sb.append("Média de avaliações: ").append(String.format("%.1f", o.mediaAvaliacoes())).append("\n\n");
+            sb.append("—".repeat(80)).append("\n");
         }
         exibir(sb.toString());
 //        exibirComImagem(sb.toString(), okBrito);
     }
+
+    private void listarAvaliacoes() {
+        String titulo = JOptionPane.showInputDialog(this, "Título da obra:");
+        if (titulo == null || titulo.isBlank()) return;
+
+        Vector<Avaliacao> avaliacoes = artGallery.listarAvaliacoes(titulo);
+        if (avaliacoes.isEmpty()) {
+           exibirComImagem("Nenhuma avaliação encontrada para o obra: " + titulo,erroBrito);
+           return;
+        }
+
+        StringBuilder sb = new StringBuilder("Avaliações de \"" + titulo + "\":\n\n");
+        sb.append("—".repeat(80)).append("\n");
+        for (Avaliacao a : avaliacoes) {
+            sb.append("Usuário: ").append(a.getUsuario());
+                    sb.append(" | Nota: ").append(a.getNota());
+                    sb.append(" | Comentário: ").append(a.getComentario()).append("\n");
+            sb.append("—".repeat(80)).append("\n");
+        }
+        exibir(sb.toString());
+    }
+
+    private void listarTodasAvaliacoes() {
+        Vector<Avaliacao> avaliacoes = artGallery.listarAvaliacoes();
+        if (avaliacoes.isEmpty()) {
+            exibirComImagem("Nenhuma avaliação cadastrada.",erroBrito);
+            return;
+        }
+
+        Vector<Obra> obras = artGallery.listarObras();
+        if (obras.isEmpty()) {
+            exibirComImagem("Nenhuma avaliação cadastrada.",erroBrito);
+            return;
+        }
+
+
+        StringBuilder sb = new StringBuilder("Avaliações:\n\n");
+        sb.append("—".repeat(80)).append("\n");
+        for (Obra o : obras) {
+            avaliacoes = o.getAvaliacoes();
+
+            for (Avaliacao a : avaliacoes) {
+                sb.append("Usuário: ").append(a.getUsuario());
+                sb.append(" | Obra: ").append(o.getTitulo());
+                sb.append(" | Nota: ").append(a.getNota()).append("\n");
+                sb.append("Comentário: ").append(a.getComentario()).append("\n");
+                sb.append("—".repeat(80)).append("\n");
+            }
+
+        }
+            exibir(sb.toString());
+    }
+
 
     private void buscarPorAutor() {
         String autor = JOptionPane.showInputDialog(this, "Nome do autor:");
@@ -344,10 +409,12 @@ public class JanelaPrincipal extends JFrame {
             return;
         }
         StringBuilder sb = new StringBuilder("Obras de " + autor + ":\n\n");
-        sb.append("=".repeat(40)).append("\n");
+//        sb.append("=".repeat(40)).append("\n");
+        sb.append("—".repeat(80)).append("\n");
         for (Obra o : obras) {
-            sb.append(o.exibirDetalhes()).append("\n");
-            sb.append("=".repeat(40)).append("\n");
+            sb.append(o.exibirDetalhes()).append("\n\n");
+            sb.append("—".repeat(80)).append("\n");
+//            sb.append("=".repeat(40)).append("\n");
         }
         exibir(sb.toString());
 //        exibirComImagem(sb.toString(),okBrito);
@@ -364,7 +431,7 @@ public class JanelaPrincipal extends JFrame {
         for (Obra o : obras) {
             sb.append(pos++).append("º — ").append(o.getTitulo())
                     .append(" (").append(o.getAutor()).append(")")
-                    .append(" | Média: ").append(String.format("%.1f", o.mediaAvaliacoes()))
+                    .append(" | Média: ").append(String.format("%.2f", o.mediaAvaliacoes()))
                     .append("\n");
         }
         exibir(sb.toString());
@@ -378,10 +445,10 @@ public class JanelaPrincipal extends JFrame {
             return;
         }
         StringBuilder sb = new StringBuilder("Exposições disponíveis:\n\n");
-        sb.append("=".repeat(40)).append("\n");
+//        sb.append("=".repeat(40)).append("\n");
         for (Exposicao e : exposicoes) {
-            sb.append(e.getNome()).append("\n");
-            sb.append("=".repeat(40)).append("\n");
+            sb.append("— ").append(e.getNome()).append("\n");
+//            sb.append("=".repeat(40)).append("\n");
         }
         exibir(sb.toString());
 //        exibirComImagem(sb.toString(), okBrito);
@@ -431,9 +498,10 @@ public class JanelaPrincipal extends JFrame {
             return;
         }
         StringBuilder sb = new StringBuilder("Obras da exposição \"" + nome + "\":\n\n");
+        sb.append("—".repeat(80)).append("\n");
         for (Obra o : obras) {
-            sb.append(o.exibirDetalhes()).append("\n");
-            sb.append("=".repeat(40)).append("\n");
+            sb.append(o.exibirDetalhes()).append("\n\n");
+            sb.append("—".repeat(80)).append("\n");
         }
         exibir(sb.toString());
 //        exibirComImagem(sb.toString(),okBrito);

@@ -8,17 +8,6 @@ import br.ufc.artgallery.repository.IRepositorioExposicao;
 import java.io.*;
 import java.util.Vector;
 
-/**
- * Implementação de IRepositorioExposicao com persistência via serialização Java.
- *
- * Funciona exatamente igual ao RepositorioObraSerializado:
- * - Serializa o Vector<Exposicao> inteiro num arquivo .dat separado
- * - Cada Exposicao contém internamente um Vector<Obra> — tudo é serializado junto
- * - As obras dentro das exposições são as mesmas referências do repositório de obras?
- *   NÃO — na serialização cada objeto é copiado. Por isso ao carregar, as obras
- *   dentro das exposições são objetos separados dos do repositório de obras.
- *   Isso é aceitável para esse trabalho.
- */
 public class RepositorioExposicaoSerialize implements IRepositorioExposicao {
 
     private static final String ARQUIVO = "data/exposicoes.dat";
